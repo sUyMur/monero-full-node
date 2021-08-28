@@ -1,0 +1,20 @@
+#######################################################################
+### Monerod
+  monero-full-node:
+    container_name: monerod
+#    image: kannix/monero-full-node                   #Source-Image
+    image: kannix-monero-full-node:local-0.17.2.0
+    restart: unless-stopped
+    volumes:
+#      - '/server/monero/:/home/monero/.bitmonero'
+      - '$PWD:/home/monero/.bitmonero'                #Change $PWD to desired folder
+    ports:
+      - '18080:18080'
+      - '18081:18081'
+#    deploy:                                          #Change if needed
+#      resources:
+#        limits:
+#          cpus: '1'                                  #Makes synching slower, but also less hard on the device
+#    environment:
+#      - HTTPS_PROXY="https://$SERVER:8118"         #Used for full proxy of all traffic via TOR
+#      - HTTP_PROXY="http://$SERVER:8118"           #Used for full proxy of all traffic via TOR
