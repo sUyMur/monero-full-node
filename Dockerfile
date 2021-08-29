@@ -3,7 +3,6 @@ FROM ubuntu:20.04 AS builder
 
 ARG MONERO_VERSION
 ARG MONERO_SHA256
-ENV TORPROXY=SERVER
 
 RUN apt-get update && apt-get install -y curl bzip2
 
@@ -26,16 +25,18 @@ RUN useradd -ms /bin/bash monero && \
 USER monero
 WORKDIR /home/monero
 
-COPY --chown=monero:monero --from=build /root/monerod /home/monero/monerod
+COPY --chown=monero:monero --from=builder /root/monerod /home/monero/monerod
 
 # blockchain location
 VOLUME /home/monero/.bitmonero
 
 EXPOSE 18080 18081
 
-ENTRYPOINT ["./monerod"]
+ARG SERVER
+ENV TORPROXY $SERVER
 
 #Added (local) tor-proxy for transactions
-CMD ["--non-interactive", "--restricted-rpc", "--rpc-bind-ip=0.0.0.0", "--confirm-external-bind", "--enable-dns-blocklist", "--out-peers=16", "--tx-proxy=tor,$TORPROXY:9050,100,disable_noise"]
+CMD "sh" "-c" "./monerod --non-interactive --restricted-rpc --rpc-bind-ip=0.0.0.0 --confirm-external-bind --enable-dns-blocklist --out-peers=16 --tx-proxy=tor,${TORPROXY}:9050,100,disable_noise"
+
 #Without transaction tor-proxy
-#CMD ["--non-interactive", "--restricted-rpc", "--rpc-bind-ip=0.0.0.0", "--confirm-external-bind", "--enable-dns-blocklist", "--out-peers=16"]
+#CMD "sh" "-c" "./monerod --non-interactive --restricted-rpc --rpc-bind-ip=0.0.0.0 --confirm-external-bind --enable-dns-blocklist --out-peers=16"
