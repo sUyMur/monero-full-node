@@ -1,9 +1,9 @@
 # Usage: docker run --restart=always -v /var/data/blockchain-xmr:/root/.bitmonero -p 18080:18080 -p 18081:18081 --name=monerod -td kannix/monero-full-node
-FROM ubuntu:20.04 AS build
+FROM ubuntu:20.04 AS builder
 
 ARG MONERO_VERSION
 ARG MONERO_SHA256
-ARG SERVER
+ENV TORPROXY=SERVER
 
 RUN apt-get update && apt-get install -y curl bzip2
 
@@ -36,6 +36,6 @@ EXPOSE 18080 18081
 ENTRYPOINT ["./monerod"]
 
 #Added (local) tor-proxy for transactions
-CMD ["--non-interactive", "--restricted-rpc", "--rpc-bind-ip=0.0.0.0", "--confirm-external-bind", "--enable-dns-blocklist", "--out-peers=16", "--tx-proxy=tor,$SERVER:9050,100,disable_noise"]
+CMD ["--non-interactive", "--restricted-rpc", "--rpc-bind-ip=0.0.0.0", "--confirm-external-bind", "--enable-dns-blocklist", "--out-peers=16", "--tx-proxy=tor,$TORPROXY:9050,100,disable_noise"]
 #Without transaction tor-proxy
 #CMD ["--non-interactive", "--restricted-rpc", "--rpc-bind-ip=0.0.0.0", "--confirm-external-bind", "--enable-dns-blocklist", "--out-peers=16"]
