@@ -3,7 +3,7 @@
   monero-full-node:
     container_name: monerod
 #    image: kannix/monero-full-node                   #Source-Image
-    image: kannix-monero-full-node:local-0.17.2.0
+    image: kannix-monero-full-node:local-0.17.2.3
     restart: unless-stopped
     volumes:
 #      - '/server/monero/:/home/monero/.bitmonero'
